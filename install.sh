@@ -40,20 +40,35 @@ echo "🔧 Setting permissions..."
 chmod +x "$INSTALL_DIR/vitally-mcp"
 xattr -d com.apple.quarantine "$INSTALL_DIR/vitally-mcp" 2>/dev/null || true
 
-# Get API credentials
+# Ask if user wants to configure now or later
 echo ""
 echo "🔑 Vitally API Configuration"
 echo ""
-read -p "Enter your Vitally API subdomain (e.g., medscout): " SUBDOMAIN
-read -p "Enter your Vitally API key: " API_KEY
-read -p "Enter your Vitally data center (US or EU, default US): " DATA_CENTER
-DATA_CENTER=${DATA_CENTER:-US}
+echo "You can either:"
+echo "  1. Configure your Vitally credentials now"
+echo "  2. Add placeholders and configure later"
+echo ""
+read -p "Configure now? (y/N): " CONFIGURE_NOW
 
-# Construct full subdomain URL
-if [[ "$SUBDOMAIN" == https://* ]]; then
-    SUBDOMAIN_URL="$SUBDOMAIN"
+if [[ "$CONFIGURE_NOW" =~ ^[Yy]$ ]]; then
+    read -p "Enter your Vitally API subdomain (e.g., medscout): " SUBDOMAIN
+    read -p "Enter your Vitally API key: " API_KEY
+    read -p "Enter your Vitally data center (US or EU, default US): " DATA_CENTER
+    DATA_CENTER=${DATA_CENTER:-US}
+
+    # Construct full subdomain URL
+    if [[ "$SUBDOMAIN" == https://* ]]; then
+        SUBDOMAIN_URL="$SUBDOMAIN"
+    else
+        SUBDOMAIN_URL="https://${SUBDOMAIN}.rest.vitally.io"
+    fi
 else
-    SUBDOMAIN_URL="https://${SUBDOMAIN}.rest.vitally.io"
+    # Use placeholders
+    SUBDOMAIN_URL="https://YOUR_ORG.rest.vitally.io"
+    API_KEY="your_vitally_api_key_here"
+    DATA_CENTER="US"
+    echo ""
+    echo "📝 Using placeholders - you'll need to edit the config file later"
 fi
 
 # Create Claude Desktop config directory if it doesn't exist
@@ -138,6 +153,24 @@ echo ""
 echo "📍 Binary installed at: $INSTALL_DIR/vitally-mcp"
 echo "📍 Config file at: $CLAUDE_CONFIG_FILE"
 echo ""
+
+if [[ ! "$CONFIGURE_NOW" =~ ^[Yy]$ ]]; then
+    echo "⚠️  IMPORTANT: You used placeholders!"
+    echo ""
+    echo "Before using Vitally MCP, edit your config file:"
+    echo "  $CLAUDE_CONFIG_FILE"
+    echo ""
+    echo "Replace these values:"
+    echo "  - YOUR_ORG.rest.vitally.io → your actual Vitally subdomain"
+    echo "  - your_vitally_api_key_here → your actual API key"
+    echo ""
+    echo "To get your API key:"
+    echo "  1. Log in to Vitally"
+    echo "  2. Settings → Integrations → Vitally REST API → Enable"
+    echo "  3. Copy the Secret Token"
+    echo ""
+fi
+
 echo "Next steps:"
 echo "1. Quit Claude Desktop completely (Cmd + Q)"
 echo "2. Reopen Claude Desktop"
