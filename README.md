@@ -4,7 +4,19 @@ Easy installation of Vitally MCP for Claude Desktop without requiring Node.js or
 
 ## Quick Start
 
-### 🚀 One-Line Installer (Easiest)
+### ⭐ Install with Claude Desktop (Recommended!)
+
+The easiest way is to let Claude Desktop do the installation for you.
+
+**👉 [See INSTALL_WITH_CLAUDE.md](INSTALL_WITH_CLAUDE.md) for copy/paste instructions**
+
+Simply copy the instructions from that file, paste them into Claude Desktop, and Claude will:
+- Download the correct binary for your Mac
+- Ask you for your API credentials interactively
+- Update your config file
+- Guide you through restart
+
+### 🚀 One-Line Terminal Installer (Alternative)
 
 **Run this in Terminal (NOT Claude Desktop):**
 
