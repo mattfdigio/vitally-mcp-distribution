@@ -2,9 +2,14 @@
 set -e
 
 # Vitally MCP One-Line Installer for Claude Desktop
-# Usage: curl -fsSL https://raw.githubusercontent.com/mattfdigio/vitally-mcp-distribution/master/install.sh | bash
+# Usage: Run this in Terminal (NOT in Claude Desktop)
+#   curl -fsSL https://raw.githubusercontent.com/mattfdigio/vitally-mcp-distribution/master/install.sh | bash
 
 echo "🚀 Vitally MCP Installer for Claude Desktop"
+echo ""
+echo "⚠️  Make sure Claude Desktop is CLOSED before continuing"
+echo ""
+read -p "Press Enter to continue (or Ctrl+C to cancel)..."
 echo ""
 
 # Detect architecture

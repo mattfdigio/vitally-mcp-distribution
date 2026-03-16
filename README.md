@@ -6,7 +6,11 @@ Easy installation of Vitally MCP for Claude Desktop without requiring Node.js or
 
 ### 🚀 One-Line Installer (Easiest)
 
-**Automatic installation with guided setup:**
+**Run this in Terminal (NOT Claude Desktop):**
+
+1. Open **Terminal** (press `Cmd + Space`, type "Terminal", press Enter)
+2. Paste this command and press Enter:
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/mattfdigio/vitally-mcp-distribution/master/install.sh | bash
 ```
