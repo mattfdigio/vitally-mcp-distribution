@@ -9,15 +9,9 @@ echo "🚀 Vitally MCP Installer for Claude Desktop"
 echo ""
 echo "⚠️  Make sure Claude Desktop is CLOSED before continuing"
 echo ""
-
-# Check if stdin is a terminal (interactive) or piped
-if [ -t 0 ]; then
-    read -p "Press Enter to continue (or Ctrl+C to cancel)..." </dev/tty
-    echo ""
-else
-    echo "Running in non-interactive mode..."
-    echo ""
-fi
+echo "Press Enter to continue (or Ctrl+C to cancel)..."
+read -r
+echo ""
 
 # Detect architecture
 ARCH=$(uname -m)
@@ -52,23 +46,17 @@ echo ""
 echo "🔑 Vitally API Configuration"
 echo ""
 
-# Check if we can do interactive prompts
-if [ -t 0 ]; then
-    echo "You can either:"
-    echo "  1. Configure your Vitally credentials now"
-    echo "  2. Add placeholders and configure later"
-    echo ""
-    read -p "Configure now? (y/N): " CONFIGURE_NOW </dev/tty
-else
-    # Piped execution - default to placeholders
-    CONFIGURE_NOW="n"
-    echo "Non-interactive mode detected - using placeholders"
-fi
+echo "You can either:"
+echo "  1. Configure your Vitally credentials now"
+echo "  2. Add placeholders and configure later"
+echo ""
+read -p "Configure now? (y/N): " CONFIGURE_NOW
+CONFIGURE_NOW=${CONFIGURE_NOW:-n}
 
 if [[ "$CONFIGURE_NOW" =~ ^[Yy]$ ]]; then
-    read -p "Enter your Vitally API subdomain (e.g., medscout): " SUBDOMAIN </dev/tty
-    read -p "Enter your Vitally API key: " API_KEY </dev/tty
-    read -p "Enter your Vitally data center (US or EU, default US): " DATA_CENTER </dev/tty
+    read -p "Enter your Vitally API subdomain (e.g., medscout): " SUBDOMAIN
+    read -p "Enter your Vitally API key: " API_KEY
+    read -p "Enter your Vitally data center (US or EU, default US): " DATA_CENTER
     DATA_CENTER=${DATA_CENTER:-US}
 
     # Construct full subdomain URL
