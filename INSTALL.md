@@ -95,10 +95,10 @@ You should see 6+ Vitally tools listed!
 **Download the appropriate binary for your system:**
 
 **Mac with Apple Silicon (M1/M2/M3/M4):**
-- Download: [vitally-mcp-arm64](https://github.com/mattfdigio/vitally-mcp-enhanced/releases/download/v2.0.0/vitally-mcp-arm64)
+- Download: [vitally-mcp-arm64](https://github.com/mattfdigio/vitally-mcp-distribution/releases/download/v2.0.0/vitally-mcp-arm64)
 
 **Mac with Intel or Linux:**
-- Download: [vitally-mcp-x64](https://github.com/mattfdigio/vitally-mcp-enhanced/releases/download/v2.0.0/vitally-mcp-x64)
+- Download: [vitally-mcp-x64](https://github.com/mattfdigio/vitally-mcp-distribution/releases/download/v2.0.0/vitally-mcp-x64)
 
 **After downloading:**
 ```bash
@@ -110,13 +110,11 @@ mv ~/Downloads/vitally-mcp-arm64 ~/bin/  # or vitally-mcp-x64
 chmod +x ~/bin/vitally-mcp-arm64  # or vitally-mcp-x64
 ```
 
-**Alternative - Clone and Build:**
-If you prefer to build from source or need a custom setup:
+**Alternative - Build from Source:**
+If you prefer to build from source (requires Node.js/npm):
 ```bash
-git clone https://github.com/mattfdigio/vitally-mcp-enhanced.git
-cd vitally-mcp-enhanced
-npm install
-npm run build
+# Contact the repository maintainer for source code access
+# Source code is maintained separately for security
 ```
 
 #### Step 2: Configure Claude Desktop
