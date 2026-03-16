@@ -56,27 +56,56 @@ CLAUDE_CONFIG_DIR="$HOME/Library/Application Support/Claude"
 CLAUDE_CONFIG_FILE="$CLAUDE_CONFIG_DIR/claude_desktop_config.json"
 mkdir -p "$CLAUDE_CONFIG_DIR"
 
+# Check if jq is available for JSON manipulation
+if command -v jq &> /dev/null; then
+    HAS_JQ=true
+else
+    HAS_JQ=false
+fi
+
 # Check if config file exists and has content
 if [ -f "$CLAUDE_CONFIG_FILE" ] && [ -s "$CLAUDE_CONFIG_FILE" ]; then
-    echo ""
-    echo "⚠️  Claude Desktop config file already exists."
-    echo "You'll need to manually add the Vitally MCP configuration."
-    echo ""
-    echo "Add this to your mcpServers section in:"
-    echo "$CLAUDE_CONFIG_FILE"
-    echo ""
-    echo '"vitally": {'
-    echo "  \"command\": \"$INSTALL_DIR/vitally-mcp\","
-    echo '  "args": [],'
-    echo '  "env": {'
-    echo "    \"VITALLY_API_SUBDOMAIN\": \"$SUBDOMAIN_URL\","
-    echo "    \"VITALLY_API_KEY\": \"$API_KEY\","
-    echo "    \"VITALLY_DATA_CENTER\": \"$DATA_CENTER\""
-    echo '  }'
-    echo '}'
-    echo ""
-    read -p "Press Enter to open the config file in TextEdit..."
-    open -e "$CLAUDE_CONFIG_FILE"
+    echo "📝 Updating existing Claude Desktop configuration..."
+
+    if [ "$HAS_JQ" = true ]; then
+        # Use jq to merge the configuration
+        TEMP_FILE=$(mktemp)
+        jq --arg cmd "$INSTALL_DIR/vitally-mcp" \
+           --arg subdomain "$SUBDOMAIN_URL" \
+           --arg apikey "$API_KEY" \
+           --arg dc "$DATA_CENTER" \
+           '.mcpServers.vitally = {
+              "command": $cmd,
+              "args": [],
+              "env": {
+                "VITALLY_API_SUBDOMAIN": $subdomain,
+                "VITALLY_API_KEY": $apikey,
+                "VITALLY_DATA_CENTER": $dc
+              }
+            }' "$CLAUDE_CONFIG_FILE" > "$TEMP_FILE"
+
+        mv "$TEMP_FILE" "$CLAUDE_CONFIG_FILE"
+        echo "✓ Configuration automatically merged"
+    else
+        # Fall back to manual instructions if jq not available
+        echo ""
+        echo "⚠️  Automatic merge requires 'jq' (not installed)."
+        echo "Add this to your mcpServers section in:"
+        echo "$CLAUDE_CONFIG_FILE"
+        echo ""
+        echo '"vitally": {'
+        echo "  \"command\": \"$INSTALL_DIR/vitally-mcp\","
+        echo '  "args": [],'
+        echo '  "env": {'
+        echo "    \"VITALLY_API_SUBDOMAIN\": \"$SUBDOMAIN_URL\","
+        echo "    \"VITALLY_API_KEY\": \"$API_KEY\","
+        echo "    \"VITALLY_DATA_CENTER\": \"$DATA_CENTER\""
+        echo '  }'
+        echo '}'
+        echo ""
+        read -p "Press Enter to open the config file in TextEdit..."
+        open -e "$CLAUDE_CONFIG_FILE"
+    fi
 else
     # Create new config file
     echo "📝 Creating Claude Desktop configuration..."
