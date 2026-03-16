@@ -160,8 +160,6 @@ echo ""
 if [[ ! "$CONFIGURE_NOW" =~ ^[Yy]$ ]]; then
     echo "⚠️  IMPORTANT: You need to add your API key!"
     echo ""
-    echo "📝 Opening config file in TextEdit..."
-    echo ""
     echo "Look for the 'vitally' section and replace:"
     echo "  1. YOUR_ORG.rest.vitally.io → your actual subdomain (e.g., medscout.rest.vitally.io)"
     echo "  2. your_vitally_api_key_here → your actual API key"
@@ -172,11 +170,11 @@ if [[ ! "$CONFIGURE_NOW" =~ ^[Yy]$ ]]; then
     echo "  3. Find 'Vitally REST API' and enable it"
     echo "  4. Copy the Secret Token (starts with sk_live_)"
     echo ""
-    sleep 2
-    open -e "$CLAUDE_CONFIG_FILE"
-    echo "✓ Config file opened in TextEdit"
+    echo "📝 To edit the config file, run this command:"
+    echo "  open -e \"$CLAUDE_CONFIG_FILE\""
     echo ""
-    echo "After editing, save the file (Cmd+S) and continue below."
+    echo "Or open Finder and press Cmd+Shift+G, then paste:"
+    echo "  ~/Library/Application Support/Claude/"
     echo ""
 fi
 
