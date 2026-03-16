@@ -4,9 +4,25 @@ Easy installation of Vitally MCP for Claude Desktop without requiring Node.js or
 
 ## Quick Start
 
+### 🚀 One-Line Installer (Easiest)
+
+**Automatic installation with guided setup:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/mattfdigio/vitally-mcp-distribution/master/install.sh | bash
+```
+
+This will:
+- Auto-detect your Mac type (Apple Silicon or Intel)
+- Download the correct binary
+- Prompt for your Vitally API credentials
+- Configure Claude Desktop automatically
+- Handle all permissions
+
+### 📦 Manual Installation
+
 Choose your installation method:
 
-### Option 1: Pre-Built Binaries (Recommended)
+#### Option 1: Pre-Built Binaries
 
 **Mac with Apple Silicon (M1/M2/M3/M4):**
 ```bash
@@ -34,7 +50,7 @@ mkdir -p ~/bin
 mv vitally-mcp ~/bin/
 ```
 
-### Option 2: Docker
+#### Option 2: Docker
 
 ```bash
 docker pull mattfdigio/vitally-mcp-enhanced:latest
