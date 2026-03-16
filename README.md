@@ -18,9 +18,18 @@ curl -fsSL https://raw.githubusercontent.com/mattfdigio/vitally-mcp-distribution
 This will:
 - Auto-detect your Mac type (Apple Silicon or Intel)
 - Download the correct binary
-- Prompt for your Vitally API credentials
-- Configure Claude Desktop automatically
+- Add placeholder credentials to Claude Desktop config
 - Handle all permissions
+
+**Note:** When run via curl pipe, the installer automatically uses placeholders. You'll need to edit the config file afterward to add your actual Vitally API key. See the instructions printed at the end of installation.
+
+**Alternative - Interactive Install:**
+If you want to enter your credentials during installation, download and run the script directly:
+
+```bash
+curl -O https://raw.githubusercontent.com/mattfdigio/vitally-mcp-distribution/master/install.sh
+bash install.sh
+```
 
 ### 📦 Manual Installation
 
