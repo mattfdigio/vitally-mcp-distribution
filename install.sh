@@ -7,11 +7,21 @@ set -e
 
 echo "🚀 Vitally MCP Installer for Claude Desktop"
 echo ""
-echo "⚠️  Make sure Claude Desktop is CLOSED before continuing"
-echo ""
-echo "Press Enter to continue (or Ctrl+C to cancel)..."
-read -r
-echo ""
+
+# Check if we're running in a non-interactive context (piped from curl)
+if [ -t 0 ]; then
+    INTERACTIVE_MODE=true
+    echo "⚠️  Make sure Claude Desktop is CLOSED before continuing"
+    echo ""
+    echo "Press Enter to continue (or Ctrl+C to cancel)..."
+    read -r
+    echo ""
+else
+    INTERACTIVE_MODE=false
+    echo "⚠️  Running in non-interactive mode (piped from curl)"
+    echo "⚠️  Make sure Claude Desktop is CLOSED"
+    echo ""
+fi
 
 # Detect architecture
 ARCH=$(uname -m)
@@ -41,13 +51,9 @@ echo "🔧 Setting permissions..."
 chmod +x "$INSTALL_DIR/vitally-mcp"
 xattr -d com.apple.quarantine "$INSTALL_DIR/vitally-mcp" 2>/dev/null || true
 
-# Check if we're running in a non-interactive context (piped from curl)
-if [ -t 0 ]; then
-    INTERACTIVE_MODE=true
-else
-    INTERACTIVE_MODE=false
-    echo "⚠️  Running in non-interactive mode (piped from curl)"
-fi
+# Define Claude config path early so we can check for existing credentials
+CLAUDE_CONFIG_DIR="$HOME/Library/Application Support/Claude"
+CLAUDE_CONFIG_FILE="$CLAUDE_CONFIG_DIR/claude_desktop_config.json"
 
 # Check if existing config has valid credentials and extract them
 EXISTING_CONFIG_HAS_CREDS=false
@@ -123,9 +129,7 @@ if [ "$EXISTING_CONFIG_HAS_CREDS" = false ]; then
     fi
 fi
 
-# Create Claude Desktop config directory if it doesn't exist
-CLAUDE_CONFIG_DIR="$HOME/Library/Application Support/Claude"
-CLAUDE_CONFIG_FILE="$CLAUDE_CONFIG_DIR/claude_desktop_config.json"
+# Create Claude Desktop config directory if it doesn't exist (path already defined above)
 mkdir -p "$CLAUDE_CONFIG_DIR"
 
 # Check if jq is available for JSON manipulation
