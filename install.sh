@@ -41,37 +41,61 @@ echo "🔧 Setting permissions..."
 chmod +x "$INSTALL_DIR/vitally-mcp"
 xattr -d com.apple.quarantine "$INSTALL_DIR/vitally-mcp" 2>/dev/null || true
 
-# Ask if user wants to configure now or later
-echo ""
-echo "🔑 Vitally API Configuration"
-echo ""
+# Check if existing config has valid credentials
+EXISTING_CONFIG_HAS_CREDS=false
+if [ -f "$CLAUDE_CONFIG_FILE" ] && command -v jq &> /dev/null; then
+    EXISTING_SUBDOMAIN=$(jq -r '.mcpServers.vitally.env.VITALLY_API_SUBDOMAIN // empty' "$CLAUDE_CONFIG_FILE" 2>/dev/null)
+    EXISTING_API_KEY=$(jq -r '.mcpServers.vitally.env.VITALLY_API_KEY // empty' "$CLAUDE_CONFIG_FILE" 2>/dev/null)
 
-echo "You can either:"
-echo "  1. Configure your Vitally credentials now"
-echo "  2. Add placeholders and configure later"
-echo ""
-read -p "Configure now? (y/N): " CONFIGURE_NOW
-CONFIGURE_NOW=${CONFIGURE_NOW:-n}
+    if [ -n "$EXISTING_SUBDOMAIN" ] && [ "$EXISTING_SUBDOMAIN" != "https://YOUR_ORG.rest.vitally.io" ] && \
+       [ -n "$EXISTING_API_KEY" ] && [ "$EXISTING_API_KEY" != "your_vitally_api_key_here" ]; then
+        EXISTING_CONFIG_HAS_CREDS=true
+        echo ""
+        echo "✓ Found existing Vitally credentials in config"
+        echo "  Subdomain: $EXISTING_SUBDOMAIN"
+        echo "  (credentials will be preserved)"
+        echo ""
 
-if [[ "$CONFIGURE_NOW" =~ ^[Yy]$ ]]; then
-    read -p "Enter your Vitally API subdomain (e.g., medscout): " SUBDOMAIN
-    read -p "Enter your Vitally API key: " API_KEY
-    read -p "Enter your Vitally data center (US or EU, default US): " DATA_CENTER
-    DATA_CENTER=${DATA_CENTER:-US}
-
-    # Construct full subdomain URL
-    if [[ "$SUBDOMAIN" == https://* ]]; then
-        SUBDOMAIN_URL="$SUBDOMAIN"
-    else
-        SUBDOMAIN_URL="https://${SUBDOMAIN}.rest.vitally.io"
+        # Set variables to be used later (they'll be extracted again by the merge logic)
+        SUBDOMAIN_URL="$EXISTING_SUBDOMAIN"
+        API_KEY="$EXISTING_API_KEY"
+        DATA_CENTER=$(jq -r '.mcpServers.vitally.env.VITALLY_DATA_CENTER // "US"' "$CLAUDE_CONFIG_FILE" 2>/dev/null)
     fi
-else
-    # Use placeholders
-    SUBDOMAIN_URL="https://YOUR_ORG.rest.vitally.io"
-    API_KEY="your_vitally_api_key_here"
-    DATA_CENTER="US"
+fi
+
+# Ask if user wants to configure now or later (skip if existing config has credentials)
+if [ "$EXISTING_CONFIG_HAS_CREDS" = false ]; then
     echo ""
-    echo "📝 Using placeholders - you'll need to edit the config file later"
+    echo "🔑 Vitally API Configuration"
+    echo ""
+
+    echo "You can either:"
+    echo "  1. Configure your Vitally credentials now"
+    echo "  2. Add placeholders and configure later"
+    echo ""
+    read -p "Configure now? (y/N): " CONFIGURE_NOW
+    CONFIGURE_NOW=${CONFIGURE_NOW:-n}
+
+    if [[ "$CONFIGURE_NOW" =~ ^[Yy]$ ]]; then
+        read -p "Enter your Vitally API subdomain (e.g., medscout): " SUBDOMAIN
+        read -p "Enter your Vitally API key: " API_KEY
+        read -p "Enter your Vitally data center (US or EU, default US): " DATA_CENTER
+        DATA_CENTER=${DATA_CENTER:-US}
+
+        # Construct full subdomain URL
+        if [[ "$SUBDOMAIN" == https://* ]]; then
+            SUBDOMAIN_URL="$SUBDOMAIN"
+        else
+            SUBDOMAIN_URL="https://${SUBDOMAIN}.rest.vitally.io"
+        fi
+    else
+        # Use placeholders
+        SUBDOMAIN_URL="https://YOUR_ORG.rest.vitally.io"
+        API_KEY="your_vitally_api_key_here"
+        DATA_CENTER="US"
+        echo ""
+        echo "📝 Using placeholders - you'll need to edit the config file later"
+    fi
 fi
 
 # Create Claude Desktop config directory if it doesn't exist
@@ -91,7 +115,28 @@ if [ -f "$CLAUDE_CONFIG_FILE" ] && [ -s "$CLAUDE_CONFIG_FILE" ]; then
     echo "📝 Updating existing Claude Desktop configuration..."
 
     if [ "$HAS_JQ" = true ]; then
-        # Use jq to merge the configuration
+        # Check if vitally config already exists and extract existing credentials
+        EXISTING_SUBDOMAIN=$(jq -r '.mcpServers.vitally.env.VITALLY_API_SUBDOMAIN // empty' "$CLAUDE_CONFIG_FILE" 2>/dev/null)
+        EXISTING_API_KEY=$(jq -r '.mcpServers.vitally.env.VITALLY_API_KEY // empty' "$CLAUDE_CONFIG_FILE" 2>/dev/null)
+        EXISTING_DATA_CENTER=$(jq -r '.mcpServers.vitally.env.VITALLY_DATA_CENTER // empty' "$CLAUDE_CONFIG_FILE" 2>/dev/null)
+
+        # Preserve existing credentials if they exist and aren't placeholders
+        if [ -n "$EXISTING_SUBDOMAIN" ] && [ "$EXISTING_SUBDOMAIN" != "https://YOUR_ORG.rest.vitally.io" ]; then
+            SUBDOMAIN_URL="$EXISTING_SUBDOMAIN"
+            echo "✓ Preserving existing API subdomain"
+        fi
+
+        if [ -n "$EXISTING_API_KEY" ] && [ "$EXISTING_API_KEY" != "your_vitally_api_key_here" ]; then
+            API_KEY="$EXISTING_API_KEY"
+            echo "✓ Preserving existing API key"
+        fi
+
+        if [ -n "$EXISTING_DATA_CENTER" ]; then
+            DATA_CENTER="$EXISTING_DATA_CENTER"
+            echo "✓ Preserving existing data center"
+        fi
+
+        # Use jq to merge the configuration with preserved credentials
         TEMP_FILE=$(mktemp)
         jq --arg cmd "$INSTALL_DIR/vitally-mcp" \
            --arg subdomain "$SUBDOMAIN_URL" \
