@@ -1,10 +1,18 @@
 # Install Vitally MCP using Claude Desktop
 
+⚠️ **IMPORTANT**: This only works in the **Claude Desktop app**, NOT on claude.ai in your browser.
+
 The easiest way to install the Vitally MCP is to let Claude Desktop do it for you.
+
+## Prerequisites
+
+- You must have **Claude Desktop** installed (download from https://claude.ai/download if needed)
+- You must be using the **desktop app**, not the web browser
 
 ## Instructions
 
-1. **Copy this entire message** and paste it into a new conversation in Claude Desktop:
+1. **Open Claude Desktop** (the desktop app on your Mac)
+2. **Copy this entire message** and paste it into a new conversation:
 
 ---
 

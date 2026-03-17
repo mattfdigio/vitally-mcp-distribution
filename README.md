@@ -4,21 +4,9 @@ Easy installation of Vitally MCP for Claude Desktop without requiring Node.js or
 
 ## Quick Start
 
-### ⭐ Install with Claude Desktop (Recommended!)
+### 🚀 One-Line Installer (Recommended)
 
-The easiest way is to let Claude Desktop do the installation for you.
-
-**👉 [See INSTALL_WITH_CLAUDE.md](INSTALL_WITH_CLAUDE.md) for copy/paste instructions**
-
-Simply copy the instructions from that file, paste them into Claude Desktop, and Claude will:
-- Download the correct binary for your Mac
-- Ask you for your API credentials interactively
-- Update your config file
-- Guide you through restart
-
-### 🚀 One-Line Terminal Installer (Alternative)
-
-**Run this in Terminal (NOT Claude Desktop):**
+**Run this in Terminal:**
 
 1. Open **Terminal** (press `Cmd + Space`, type "Terminal", press Enter)
 2. Paste this command and press Enter:
@@ -27,21 +15,20 @@ Simply copy the instructions from that file, paste them into Claude Desktop, and
 curl -fsSL https://raw.githubusercontent.com/mattfdigio/vitally-mcp-distribution/master/install.sh | bash
 ```
 
-This will:
-- Auto-detect your Mac type (Apple Silicon or Intel)
-- Download the correct binary
-- Add placeholder credentials to Claude Desktop config
-- Handle all permissions
+3. When prompted, enter your Vitally API credentials (or press Enter to use placeholders)
+4. Follow the instructions to open and edit the config file with your API key
+5. Restart Claude Desktop (Cmd+Q, then reopen)
 
-**Note:** When run via curl pipe, the installer automatically uses placeholders. You'll need to edit the config file afterward to add your actual Vitally API key. See the instructions printed at the end of installation.
+**What this does:**
+- Auto-detects your Mac type (Apple Silicon or Intel)
+- Downloads the correct binary to `~/.local/bin/vitally-mcp`
+- Adds the Vitally MCP to your Claude Desktop config
+- Provides instructions for adding your API key
 
-**Alternative - Interactive Install:**
-If you want to enter your credentials during installation, download and run the script directly:
-
-```bash
-curl -O https://raw.githubusercontent.com/mattfdigio/vitally-mcp-distribution/master/install.sh
-bash install.sh
-```
+**Where to get your API key:**
+1. Log in to Vitally
+2. Settings → Integrations → Vitally REST API → Enable
+3. Copy the Secret Token (starts with `sk_live_`)
 
 ### 📦 Manual Installation
 
